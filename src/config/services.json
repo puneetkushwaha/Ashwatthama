@@ -1,15 +1,15 @@
 {
-  "websiteBaseUrl": "https://athas.dev",
-  "apiBaseUrl": "https://athas.dev",
-  "docsUrl": "https://athas.dev/docs",
-  "telemetryDocsUrl": "https://athas.dev/docs/telemetry",
-  "pricingUrl": "https://athas.dev/pricing",
-  "dashboardUrl": "https://athas.dev/dashboard",
-  "dashboardBillingUrl": "https://athas.dev/dashboard/settings/billing",
-  "dashboardIntegrationsUrl": "https://athas.dev/dashboard/settings/integrations",
-  "dashboardCollaborationUrl": "https://athas.dev/dashboard/collaboration",
-  "extensionsCdnBaseUrl": "https://athas.dev/extensions",
-  "stableUpdateUrl": "https://athas.dev/api/update/stable",
-  "githubReleasesBaseUrl": "https://github.com/athasdev/athas/releases",
-  "githubReleasesApiBaseUrl": "https://api.github.com/repos/athasdev/athas/releases"
+  "websiteBaseUrl": "http://localhost:3000",
+  "apiBaseUrl": "http://localhost:3000",
+  "docsUrl": "http://localhost:3000/docs",
+  "telemetryDocsUrl": "http://localhost:3000/docs/telemetry",
+  "pricingUrl": "http://localhost:3000/pricing",
+  "dashboardUrl": "http://localhost:3000/dashboard",
+  "dashboardBillingUrl": "http://localhost:3000/dashboard/settings/billing",
+  "dashboardIntegrationsUrl": "http://localhost:3000/dashboard/settings/integrations",
+  "dashboardCollaborationUrl": "http://localhost:3000/dashboard/collaboration",
+  "extensionsCdnBaseUrl": "http://localhost:3000/extensions",
+  "stableUpdateUrl": "http://localhost:3000/api/update/stable",
+  "githubReleasesBaseUrl": "https://github.com/puneetkushwaha/Ashwatthama/releases",
+  "githubReleasesApiBaseUrl": "https://api.github.com/repos/puneetkushwaha/Ashwatthama/releases"
 }

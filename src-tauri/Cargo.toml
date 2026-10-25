@@ -1,8 +1,8 @@
 [package]
 name = "athas"
 version = "0.17.0"
-description = "Athas code editor"
-authors = ["Athas <hey@athas.dev>"]
+description = "Ashwatthama code editor"
+authors = ["Ashwatthama Team"]
 edition = "2024"
 
 [lints]
