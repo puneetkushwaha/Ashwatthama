@@ -1,0 +1,25 @@
+{
+  "$schema": "https://athas.dev/schemas/extension.json",
+  "id": "athas.agent.claude-acp",
+  "name": "Claude Agent",
+  "displayName": "Claude Agent",
+  "description": "Runs Anthropic's Claude Code through the community ACP adapter. Sign in with your own Claude subscription or Anthropic API key. Subscription use counts against your plan's Agent SDK credit. Not affiliated with Anthropic.",
+  "version": "1.0.0",
+  "publisher": "Agent Client Protocol",
+  "categories": ["Agent"],
+  "agents": [
+    {
+      "id": "claude-acp",
+      "name": "Claude Agent",
+      "binaryName": "claude-agent-acp",
+      "description": "Runs Anthropic's Claude Code through the community ACP adapter. Sign in with your own Claude subscription or Anthropic API key. Subscription use counts against your plan's Agent SDK credit. Not affiliated with Anthropic.",
+      "args": [],
+      "install": {
+        "runtime": "node",
+        "package": "@agentclientprotocol/claude-agent-acp@0.73.0",
+        "version": "0.73.0",
+        "command": "claude-agent-acp"
+      }
+    }
+  ]
+}

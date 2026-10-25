@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ashwatthama IDE — Authentic Lightweight Code Editor with AI Agents</title>
+  <meta name="description" content="Open-source code editor for Windows, macOS and Linux. Edit code, run AI agents (Google Antigravity, Qwen, DeepSeek), manage Git, use terminals and browse databases in one lightweight workspace.">
+  <link rel="icon" type="image/x-icon" href="./public/favicon.ico">
+  <link rel="stylesheet" href="./public/athas.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    body {
+      font-family: var(--font-sans);
+      overflow-x: hidden;
+    }
+    code, pre {
+      font-family: var(--font-mono);
+    }
+    .hero-glow {
+      position: absolute;
+      top: -120px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 1000px;
+      height: 600px;
+      background: radial-gradient(ellipse at center, rgba(20, 109, 247, 0.18) 0%, rgba(20, 109, 247, 0) 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    html:not(.dark) .glass-card {
+      background: rgba(0, 0, 0, 0.02);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+    }
+    .custom-shadow {
+      box-shadow: 0 25px 65px -15px rgba(0, 0, 0, 0.6), 0 0 2px 1px rgba(255, 255, 255, 0.08);
+    }
+    .tab-active {
+      background-color: var(--primary) !important;
+      color: #ffffff !important;
+    }
+    .transition-all-300 {
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+  </style>
+</head>
+<body class="bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary">
+
+  <!-- Glow Background -->
+  <div class="hero-glow"></div>
+
+  <!-- Header -->
+  <header class="fixed top-0 left-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-md transition-all duration-300">
+    <nav class="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 sm:px-8 lg:px-10">
+      
+      <!-- Brand Logo -->
+      <a href="#" class="flex items-center gap-2.5 rounded-md text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+        <img src="./public/logo.svg" alt="Ashwatthama IDE Logo" class="h-7 w-7 rounded object-contain">
+        <span class="text-base font-bold tracking-tight">Ashwatthama <span class="text-xs font-semibold uppercase tracking-wider text-primary px-1.5 py-0.5 rounded bg-primary/10 ml-1">IDE</span></span>
+      </a>
+
+      <!-- Desktop Nav -->
+      <div class="hidden items-center gap-1 md:flex">
+        <a href="#features" class="inline-flex h-8 items-center rounded-full px-3 text-sm font-medium text-foreground/70 transition-colors hover:bg-surface hover:text-foreground">Features</a>
+        <a href="#workspace" class="inline-flex h-8 items-center rounded-full px-3 text-sm font-medium text-foreground/70 transition-colors hover:bg-surface hover:text-foreground">Workspace</a>
+        <a href="#agents" class="inline-flex h-8 items-center rounded-full px-3 text-sm font-medium text-foreground/70 transition-colors hover:bg-surface hover:text-foreground">AI Agents</a>
+        <a href="#integrations" class="inline-flex h-8 items-center rounded-full px-3 text-sm font-medium text-foreground/70 transition-colors hover:bg-surface hover:text-foreground">Integrations</a>
+        <a href="https://github.com/puneetkushwaha/Ashwatthama" target="_blank" class="inline-flex h-8 items-center rounded-full px-3 text-sm font-medium text-foreground/70 transition-colors hover:bg-surface hover:text-foreground">Docs</a>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center gap-3">
+        <!-- Theme Toggle -->
+        <button id="themeToggle" aria-label="Toggle Theme" class="flex h-8 w-8 items-center justify-center rounded-full border border-border/60 bg-surface text-foreground/80 hover:text-foreground transition-colors">
+          <svg id="themeIconSun" class="hidden h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+          <svg id="themeIconMoon" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+          </svg>
+        </button>
+
+        <!-- GitHub Stars -->
+        <a href="https://github.com/puneetkushwaha/Ashwatthama" target="_blank" class="hidden items-center gap-1.5 rounded-full border border-border/60 bg-surface px-3 py-1 text-xs font-medium text-foreground/80 hover:text-foreground hover:bg-surface/80 transition-colors sm:flex">
+          <svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+          </svg>
+          <span>Star</span>
+          <span class="rounded bg-background/60 px-1.5 py-0.5 text-[11px] font-semibold text-primary">3.1k</span>
+        </a>
+
+        <!-- Download Button -->
+        <a href="#download" class="inline-flex h-8 items-center justify-center rounded-full bg-primary px-4 text-xs font-semibold text-primary-foreground shadow-sm transition-all hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+          Download
+        </a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="relative pt-32 pb-20 sm:pt-40 sm:pb-28">
+    <div class="mx-auto max-w-7xl px-6 sm:px-8 lg:px-10 text-center">
+      
+      <!-- Version Tag -->
+      <div class="inline-flex items-center gap-2 rounded-full border border-border/80 bg-surface/80 px-3.5 py-1 text-xs font-medium text-foreground/80 backdrop-blur mb-6 hover:border-primary/50 transition-colors">
+        <span class="flex h-1.5 w-1.5 rounded-full bg-primary animate-pulse"></span>
+        <span class="font-semibold text-primary">v0.17.0</span>
+        <span class="text-foreground/40">|</span>
+        <span>Native speed with Google Antigravity &amp; local models</span>
+      </div>
+
+      <!-- Main Heading -->
+      <h1 class="mx-auto max-w-4xl text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-foreground leading-[1.08]">
+        Your code. Your agents.<br>
+        <span class="bg-gradient-to-r from-primary via-blue-400 to-indigo-400 bg-clip-text text-transparent">One workspace.</span>
+      </h1>
+
+      <!-- Subtitle -->
+      <p class="mx-auto mt-6 max-w-2xl text-base sm:text-lg text-foreground/70 leading-relaxed font-normal">
+        A lightweight, open-source code editor with AI coding agents, terminal, Git, and databases built in. Powered by local models (<strong class="text-foreground font-semibold">Qwen 2.5 Coder 7B</strong>, <strong class="text-foreground font-semibold">DeepSeek Coder 6.7B</strong>) and native <strong class="text-foreground font-semibold">Google Antigravity</strong> pairing.
+      </p>
+
+      <!-- Primary Action Buttons -->
+      <div class="mt-10 flex flex-wrap items-center justify-center gap-4">
+        <!-- Main Download Pill -->
+        <div class="relative inline-block text-left" id="downloadDropdownContainer">
+          <div class="inline-flex rounded-full shadow-lg">
+            <a id="heroDownloadBtn" href="#download" class="inline-flex items-center gap-2 rounded-l-full bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-all">
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              <span id="heroDownloadLabel">Download for Windows</span>
+            </a>
+            <button id="heroDropdownToggle" type="button" class="inline-flex items-center rounded-r-full bg-primary/90 border-l border-white/20 px-3 py-3.5 text-primary-foreground hover:bg-primary transition-all">
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Dropdown Menu -->
+          <div id="downloadDropdownMenu" class="hidden absolute right-0 mt-2 w-64 origin-top-right rounded-xl border border-border bg-card p-1.5 shadow-2xl z-50">
+            <div class="px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-foreground/50">All Platforms</div>
+            <a href="https://github.com/puneetkushwaha/Ashwatthama/releases" class="flex items-center justify-between rounded-lg px-3 py-2 text-xs font-medium text-foreground hover:bg-surface transition-colors">
+              <span>Windows x64 (.exe installer)</span>
+              <span class="text-[10px] text-foreground/50">22MB</span>
+            </a>
+            <a href="https://github.com/puneetkushwaha/Ashwatthama/releases" class="flex items-center justify-between rounded-lg px-3 py-2 text-xs font-medium text-foreground hover:bg-surface transition-colors">
+              <span>Windows MSI (.msi package)</span>
+              <span class="text-[10px] text-foreground/50">30MB</span>
+            </a>
+            <a href="https://github.com/puneetkushwaha/Ashwatthama/releases" class="flex items-center justify-between rounded-lg px-3 py-2 text-xs font-medium text-foreground hover:bg-surface transition-colors">
+              <span>macOS Apple Silicon (M1/M2/M3)</span>
+              <span class="text-[10px] text-foreground/50">.dmg</span>
+            </a>
+            <a href="https://github.com/puneetkushwaha/Ashwatthama/releases" class="flex items-center justify-between rounded-lg px-3 py-2 text-xs font-medium text-foreground hover:bg-surface transition-colors">
+              <span>Linux (x64 AppImage / .deb)</span>
+              <span class="text-[10px] text-foreground/50">Multi</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- View Source -->
+        <a href="https://github.com/puneetkushwaha/Ashwatthama" target="_blank" class="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-6 py-3.5 text-sm font-semibold text-foreground hover:bg-surface-hover hover:border-border/80 transition-all">
+          <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+          </svg>
+          <span>View Source</span>
+        </a>
+      </div>
+
+      <!-- Quick Install Snippet -->
+      <div class="mt-8 flex items-center justify-center">
+        <div class="inline-flex items-center gap-3 rounded-full border border-border/80 bg-card/60 px-4 py-2 text-xs backdrop-blur">
+          <span class="text-foreground/50 select-none font-mono">$</span>
+          <code id="heroInstallCmd" class="font-mono text-foreground/90 font-medium">irm https://ashwatthama.ai/install.ps1 | iex</code>
+          <button id="heroCopyBtn" aria-label="Copy install command" class="text-foreground/50 hover:text-primary transition-colors pl-1">
+            <svg id="heroCopyIcon" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+            </svg>
+            <span id="heroCopyToast" class="hidden text-[10px] font-semibold text-emerald-400">Copied!</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Interactive App Hero Mockup -->
+      <div class="mt-16 sm:mt-20 relative mx-auto max-w-6xl">
+        <div class="relative rounded-2xl p-2 sm:p-3 bg-gradient-to-b from-border/60 via-border/20 to-transparent custom-shadow">
+          <div class="relative overflow-hidden rounded-xl border border-border/80 bg-background">
+            <img id="heroShotImg" src="./public/shots/hero-dark.webp" alt="Ashwatthama IDE Interface Preview" class="w-full h-auto object-cover transition-opacity duration-300">
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Key Metrics Banner -->
+  <section class="border-y border-border/60 bg-surface/40 py-10">
+    <div class="mx-auto max-w-7xl px-6 sm:px-8 lg:px-10">
+      <div class="grid grid-cols-2 gap-8 md:grid-cols-4 text-center">
+        <div>
+          <div class="text-3xl sm:text-4xl font-bold tracking-tight text-foreground font-mono">3,122+</div>
+          <div class="mt-1 text-xs text-foreground/60 uppercase tracking-wider font-medium">GitHub Stars</div>
+        </div>
+        <div>
+          <div class="text-3xl sm:text-4xl font-bold tracking-tight text-foreground font-mono">102+</div>
+          <div class="mt-1 text-xs text-foreground/60 uppercase tracking-wider font-medium">Extensions &amp; Themes</div>
+        </div>
+        <div>
+          <div class="text-3xl sm:text-4xl font-bold tracking-tight text-foreground font-mono">33,000+</div>
+          <div class="mt-1 text-xs text-foreground/60 uppercase tracking-wider font-medium">Downloads</div>
+        </div>
+        <div>
+          <div class="text-3xl sm:text-4xl font-bold tracking-tight text-primary font-mono">AGPL-3.0</div>
+          <div class="mt-1 text-xs text-foreground/60 uppercase tracking-wider font-medium">Open-Source License</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Workspace & Workflow Showcase -->
+  <section id="workspace" class="py-24 sm:py-32 relative">
+    <div class="mx-auto max-w-7xl px-6 sm:px-8 lg:px-10">
+      
+      <div class="text-center max-w-3xl mx-auto">
+        <div class="text-xs font-semibold uppercase tracking-wider text-primary">The Workspace</div>
+        <h2 class="mt-2 text-3xl sm:text-5xl font-bold tracking-tight text-foreground">
+          From the first idea.<br>To the final commit.
+        </h2>
+        <p class="mt-4 text-base text-foreground/70">
+          Work with your agent, review the changes, and follow your pull requests. Keep the whole workflow close to the code.
+        </p>
+      </div>
+
+      <!-- Workflow Switcher Tabs -->
+      <div class="mt-12 flex justify-center">
+        <div class="inline-flex flex-wrap items-center gap-1.5 rounded-full border border-border/80 bg-surface p-1.5 shadow-sm">
+          <button data-wf="editor" class="wf-tab tab-active px-4 py-1.5 text-xs font-semibold rounded-full transition-all">Editor</button>
+          <button data-wf="agents" class="wf-tab px-4 py-1.5 text-xs font-medium text-foreground/70 rounded-full hover:text-foreground transition-all">Agents</button>
+          <button data-wf="terminal" class="wf-tab px-4 py-1.5 text-xs font-medium text-foreground/70 rounded-full hover:text-foreground transition-all">Terminal</button>
+          <button data-wf="git" class="wf-tab px-4 py-1.5 text-xs font-medium text-foreground/70 rounded-full hover:text-foreground transition-all">Git</button>
+          <button data-wf="github" class="wf-tab px-4 py-1.5 text-xs font-medium text-foreground/70 rounded-full hover:text-foreground transition-all">GitHub</button>
+          <button data-wf="keys" class="wf-tab px-4 py-1.5 text-xs font-medium text-foreground/70 rounded-full hover:text-foreground transition-all">Keys</button>
+        </div>
+      </div>
+
+      <!-- Workflow Preview Shot -->
+      <div class="mt-10 relative mx-auto max-w-5xl">
+        <div class="rounded-2xl p-2 bg-gradient-to-b from-border/80 to-border/20 custom-shadow">
+          <div class="overflow-hidden rounded-xl border border-border bg-card">
+            <img id="workflowShotImg" src="./public/shots/workflows/editor-dark.webp" alt="Workflow Preview" class="w-full h-auto object-cover transition-opacity duration-300">
+          </div>
+        </div>
+
+        <!-- Dynamic Caption -->
+        <div id="workflowCaption" class="mt-6 text-center text-sm text-foreground/70 font-medium">
+          Fast CodeMirror editor with Vim bindings, syntax highlighting, and instant zero-lag response.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- AI Agents Section -->
+  <section id="agents" class="py-24 border-t border-border/60 bg-surface/30 relative">
+    <div class="mx-auto max-w-7xl px-6 sm:px-8 lg:px-10">
+      
+      <div class="text-center max-w-3xl mx-auto">
+        <div class="text-xs font-semibold uppercase tracking-wider text-primary">Next-Gen Agentic Architecture</div>
+        <h2 class="mt-2 text-3xl sm:text-5xl font-bold tracking-tight text-foreground">
+          A familiar agent.<br>A better place to work.
+        </h2>
+        <p class="mt-4 text-base text-foreground/70">
+          Run private offline local models or connect frontier coding agents directly inside your editor. Your tools, together in one seamless canvas.
+        </p>
+      </div>
+
+      <!-- Agent Cards Grid -->
+      <div class="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        
+        <!-- Google Antigravity Card -->
+        <div class="glass-card rounded-2xl p-6 relative overflow-hidden group hover:border-primary/50 transition-all">
+          <div class="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary mb-4">
+            <img src="./public/icons/antigravity.svg" alt="Google Antigravity" class="h-6 w-6">
+          </div>
+          <h3 class="text-lg font-bold text-foreground">Google Antigravity</h3>
+          <p class="mt-2 text-xs text-foreground/70 leading-relaxed">
+            Advanced agentic engine with deep thinking, autonomous subagents, tool execution, and self-verifying architecture.
+          </p>
+          <div class="mt-4 flex items-center gap-1.5 text-[11px] font-semibold text-primary">
+            <span>Built-in Engine</span> &rarr;
+          </div>
+        </div>
+
+        <!-- Qwen 2.5 Coder 7B Card -->
+        <div class="glass-card rounded-2xl p-6 relative overflow-hidden group hover:border-primary/50 transition-all">
+          <div class="h-10 w-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 mb-4 font-mono font-bold text-sm">
+            Q2.5
+          </div>
+          <h3 class="text-lg font-bold text-foreground">Qwen 2.5 Coder 7B</h3>
+          <p class="mt-2 text-xs text-foreground/70 leading-relaxed">
+            Dedicated local coding model via Ollama. 100% private, zero telemetry, lightning-fast inline completions and refactoring.
+          </p>
+          <div class="mt-4 flex items-center gap-1.5 text-[11px] font-semibold text-emerald-400">
+            <span>Offline Local</span> &rarr;
+          </div>
+        </div>
+
+        <!-- DeepSeek Coder 6.7B Card -->
+        <div class="glass-card rounded-2xl p-6 relative overflow-hidden group hover:border-primary/50 transition-all">
+          <div class="h-10 w-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400 mb-4 font-mono font-bold text-sm">
+            DS
+          </div>
+          <h3 class="text-lg font-bold text-foreground">DeepSeek Coder 6.7B</h3>
+          <p class="mt-2 text-xs text-foreground/70 leading-relaxed">
+            High-precision code reasoning and architectural debugging. Runs locally on your machine with 8k token output limits.
+          </p>
+          <div class="mt-4 flex items-center gap-1.5 text-[11px] font-semibold text-blue-400">
+            <span>Local Reasoning</span> &rarr;
+          </div>
+        </div>
+
+        <!-- Claude Code Card -->
+        <div class="glass-card rounded-2xl p-6 relative overflow-hidden group hover:border-primary/50 transition-all">
+          <div class="h-10 w-10 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-400 mb-4">
+            <img src="./public/icons/claude-code.svg" alt="Claude Code" class="h-6 w-6">
+          </div>
+          <h3 class="text-lg font-bold text-foreground">Claude Code Agent</h3>
+          <p class="mt-2 text-xs text-foreground/70 leading-relaxed">
+            Direct terminal agent bridge with Anthropic's Claude 3.7 / 3.5 Sonnet, supporting project indexing and multi-turn edits.
+          </p>
+          <div class="mt-4 flex items-center gap-1.5 text-[11px] font-semibold text-amber-400">
+            <span>Connected Agent</span> &rarr;
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Made for Everyday Work (Features Grid) -->
+  <section id="features" class="py-24 relative">
+    <div class="mx-auto max-w-7xl px-6 sm:px-8 lg:px-10">
+      
+      <div class="text-center max-w-3xl mx-auto">
+        <div class="text-xs font-semibold uppercase tracking-wider text-primary">Built for Developers</div>
+        <h2 class="mt-2 text-3xl sm:text-5xl font-bold tracking-tight text-foreground">
+          Small details.<br>More room to focus.
+        </h2>
+        <p class="mt-4 text-base text-foreground/70">
+          A command palette that keeps up. Workspaces that remember. The tools you reach for, right where you need them.
+        </p>
+      </div>
+
+      <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
+        
+        <div class="glass-card rounded-2xl p-8">
+          <div class="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary mb-4 font-mono font-bold text-xs">
+            01
+          </div>
+          <h3 class="text-xl font-bold text-foreground">Native Terminal Integration</h3>
+          <p class="mt-3 text-sm text-foreground/70 leading-relaxed">
+            Full-featured integrated terminal running PowerShell on Windows and zsh/bash on Unix. Includes shell integration, split panes, and auto-restored sessions.
+          </p>
+        </div>
+
+        <div class="glass-card rounded-2xl p-8">
+          <div class="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary mb-4 font-mono font-bold text-xs">
+            02
+          </div>
+          <h3 class="text-xl font-bold text-foreground">Built-in Database Explorer</h3>
+          <p class="mt-3 text-sm text-foreground/70 leading-relaxed">
+            Inspect schemas, run SQL queries, and preview rows for PostgreSQL, MySQL, SQLite, DuckDB, and Redis directly inside the IDE without heavy third-party apps.
+          </p>
+        </div>
+
+        <div class="glass-card rounded-2xl p-8">
+          <div class="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary mb-4 font-mono font-bold text-xs">
+            03
+          </div>
+          <h3 class="text-xl font-bold text-foreground">Instant Startup &amp; Light RAM</h3>
+          <p class="mt-3 text-sm text-foreground/70 leading-relaxed">
+            Built with native Rust and Webview2 architecture. Cold boot in under 100ms and operates comfortably on under 50MB memory.
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Download & Install Section -->
+  <section id="download" class="py-24 border-t border-border/60 bg-surface/40 relative">
+    <div class="mx-auto max-w-7xl px-6 sm:px-8 lg:px-10 text-center">
+      
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-4xl sm:text-5xl font-bold tracking-tight text-foreground">
+          One fast editor. All yours.
+        </h2>
+        <p class="mt-4 text-base text-foreground/70">
+          Everything you need to build, in one lightweight workspace. Available free for Windows, macOS, and Linux.
+        </p>
+
+        <!-- Download Cards -->
+        <div class="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-6 text-left">
+          
+          <!-- Windows -->
+          <div class="glass-card rounded-2xl p-6 border-2 border-primary/40 relative">
+            <span class="absolute top-4 right-4 text-[10px] uppercase font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">Recommended</span>
+            <div class="text-lg font-bold text-foreground">Windows</div>
+            <p class="mt-1 text-xs text-foreground/60">Windows 10, 11 (x64)</p>
+            <div class="mt-6 flex flex-col gap-2.5">
+              <a href="https://github.com/puneetkushwaha/Ashwatthama/releases" class="w-full text-center py-2.5 px-4 bg-primary text-primary-foreground font-semibold text-xs rounded-lg hover:bg-primary/90 transition-all">
+                Download Installer (.exe)
+              </a>
+              <a href="https://github.com/puneetkushwaha/Ashwatthama/releases" class="w-full text-center py-2 px-4 border border-border text-foreground font-medium text-xs rounded-lg hover:bg-surface transition-all">
+                Download Package (.msi)
+              </a>
+            </div>
+          </div>
+
+          <!-- macOS -->
+          <div class="glass-card rounded-2xl p-6">
+            <div class="text-lg font-bold text-foreground">macOS</div>
+            <p class="mt-1 text-xs text-foreground/60">Apple Silicon &amp; Intel (12+)</p>
+            <div class="mt-6 flex flex-col gap-2.5">
+              <a href="https://github.com/puneetkushwaha/Ashwatthama/releases" class="w-full text-center py-2.5 px-4 bg-surface text-foreground font-semibold text-xs rounded-lg border border-border hover:bg-surface-hover transition-all">
+                Apple Silicon (.dmg)
+              </a>
+              <a href="https://github.com/puneetkushwaha/Ashwatthama/releases" class="w-full text-center py-2 px-4 border border-border text-foreground font-medium text-xs rounded-lg hover:bg-surface transition-all">
+                Intel x64 (.dmg)
+              </a>
+            </div>
+          </div>
+
+          <!-- Linux -->
+          <div class="glass-card rounded-2xl p-6">
+            <div class="text-lg font-bold text-foreground">Linux</div>
+            <p class="mt-1 text-xs text-foreground/60">Ubuntu, Debian, Fedora, Arch</p>
+            <div class="mt-6 flex flex-col gap-2.5">
+              <a href="https://github.com/puneetkushwaha/Ashwatthama/releases" class="w-full text-center py-2.5 px-4 bg-surface text-foreground font-semibold text-xs rounded-lg border border-border hover:bg-surface-hover transition-all">
+                AppImage / .deb
+              </a>
+              <a href="https://github.com/puneetkushwaha/Ashwatthama/releases" class="w-full text-center py-2 px-4 border border-border text-foreground font-medium text-xs rounded-lg hover:bg-surface transition-all">
+                .rpm / tar.gz
+              </a>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Terminal Command Box -->
+        <div class="mt-12 text-left bg-card rounded-2xl border border-border p-6 max-w-2xl mx-auto">
+          <div class="text-xs font-semibold text-foreground/70 mb-3">One line. Then get to work.</div>
+          <div class="flex items-center justify-between rounded-xl bg-background border border-border/80 px-4 py-3 font-mono text-xs">
+            <span class="text-foreground/90">irm https://ashwatthama.ai/install.ps1 | iex</span>
+            <button class="copy-btn text-foreground/50 hover:text-primary transition-colors pl-2" data-copy="irm https://ashwatthama.ai/install.ps1 | iex">
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-border py-16 bg-background">
+    <div class="mx-auto max-w-7xl px-6 sm:px-8 lg:px-10 flex flex-col md:flex-row items-center justify-between gap-6">
+      <div class="flex items-center gap-3">
+        <img src="./public/logo.svg" alt="Ashwatthama IDE" class="h-6 w-6">
+        <span class="text-sm font-bold text-foreground">Ashwatthama IDE</span>
+        <span class="text-xs text-foreground/50">&copy; 2026 Ashwatthama AI. AGPL-3.0 Open-Source.</span>
+      </div>
+      <div class="flex items-center gap-6 text-xs text-foreground/70">
+        <a href="#features" class="hover:text-foreground transition-colors">Features</a>
+        <a href="#agents" class="hover:text-foreground transition-colors">Agents</a>
+        <a href="#download" class="hover:text-foreground transition-colors">Download</a>
+        <a href="https://github.com/puneetkushwaha/Ashwatthama" target="_blank" class="hover:text-foreground transition-colors">GitHub</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Interactive Logic -->
+  <script>
+    // Theme Toggle
+    const themeToggle = document.getElementById('themeToggle');
+    const sunIcon = document.getElementById('themeIconSun');
+    const moonIcon = document.getElementById('themeIconMoon');
+    const heroShotImg = document.getElementById('heroShotImg');
+    const workflowShotImg = document.getElementById('workflowShotImg');
+
+    function updateThemeUI(isDark) {
+      if (isDark) {
+        document.documentElement.classList.add('dark');
+        sunIcon.classList.remove('hidden');
+        moonIcon.classList.add('hidden');
+        if (heroShotImg) heroShotImg.src = './public/shots/hero-dark.webp';
+        updateWorkflowImage('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+        sunIcon.classList.add('hidden');
+        moonIcon.classList.remove('hidden');
+        if (heroShotImg) heroShotImg.src = './public/shots/hero-light.webp';
+        updateWorkflowImage('light');
+      }
+    }
+
+    let isDark = localStorage.getItem('theme') !== 'light';
+    updateThemeUI(isDark);
+
+    themeToggle.addEventListener('click', () => {
+      isDark = !document.documentElement.classList.contains('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      updateThemeUI(isDark);
+    });
+
+    // Workflow Tabs
+    let activeWf = 'editor';
+    const wfCaptions = {
+      editor: 'Fast CodeMirror editor with Vim bindings, syntax highlighting, and instant zero-lag response.',
+      agents: 'Google Antigravity & local models (Qwen 2.5 Coder, DeepSeek) embedded into your workflow.',
+      terminal: 'Integrated PowerShell/zsh multiplexed terminal with persistence and shell integration.',
+      git: 'Visual Git diffs, staged lines, inline git blame, and branch history tracking.',
+      github: 'Review GitHub pull requests and triage issues directly beside your active code.',
+      keys: 'Customizable keybinding presets for VS Code, Vim, and Sublime Text developers.'
+    };
+
+    function updateWorkflowImage(theme) {
+      if (!workflowShotImg) return;
+      workflowShotImg.src = './public/shots/workflows/' + activeWf + '-' + (theme || (isDark ? 'dark' : 'light')) + '.webp';
+    }
+
+    document.querySelectorAll('.wf-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.wf-tab').forEach(b => {
+          b.classList.remove('tab-active');
+          b.classList.add('text-foreground/70');
+        });
+        btn.classList.add('tab-active');
+        btn.classList.remove('text-foreground/70');
+        activeWf = btn.getAttribute('data-wf');
+        updateWorkflowImage();
+        const caption = document.getElementById('workflowCaption');
+        if (caption) caption.textContent = wfCaptions[activeWf] || '';
+      });
+    });
+
+    // Download dropdown toggle
+    const dropdownToggle = document.getElementById('heroDropdownToggle');
+    const dropdownMenu = document.getElementById('downloadDropdownMenu');
+    dropdownToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      dropdownMenu.classList.toggle('hidden');
+    });
+    document.addEventListener('click', () => {
+      dropdownMenu.classList.add('hidden');
+    });
+
+    // Copy commands with toast
+    function setupCopy(btnId, toastId, text) {
+      const btn = document.getElementById(btnId);
+      if (!btn) return;
+      btn.addEventListener('click', () => {
+        navigator.clipboard.writeText(text);
+        const icon = btn.querySelector('svg');
+        const toast = document.getElementById(toastId);
+        if (icon && toast) {
+          icon.classList.add('hidden');
+          toast.classList.remove('hidden');
+          setTimeout(() => {
+            icon.classList.remove('hidden');
+            toast.classList.add('hidden');
+          }, 2000);
+        }
+      });
+    }
+    setupCopy('heroCopyBtn', 'heroCopyToast', 'irm https://ashwatthama.ai/install.ps1 | iex');
+
+    document.querySelectorAll('.copy-btn').forEach(b => {
+      b.addEventListener('click', () => {
+        const text = b.getAttribute('data-copy');
+        if (text) {
+          navigator.clipboard.writeText(text);
+          b.innerHTML = '<span class="text-[10px] text-emerald-400 font-bold">Copied!</span>';
+          setTimeout(() => {
+            b.innerHTML = '<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" /></svg>';
+          }, 2000);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
